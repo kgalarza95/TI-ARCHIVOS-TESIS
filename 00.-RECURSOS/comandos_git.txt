@@ -1,0 +1,10 @@
+git init
+
+
+git add nombre-del-fichero
+git status
+
+git add .   ##agregar todos llos arcchivos
+
+
+git commit -m "mensaje del commit"
