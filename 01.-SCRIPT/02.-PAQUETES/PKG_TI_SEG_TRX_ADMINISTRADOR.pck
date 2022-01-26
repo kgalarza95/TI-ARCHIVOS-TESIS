@@ -1,0 +1,150 @@
+CREATE OR REPLACE NONEDITIONABLE PACKAGE PKG_TI_SEG_TRX_ADMINISTRADOR IS
+
+  -- AUTHOR  : KEVINGALARZA
+  -- CREATED : 23/1/2022 0:25:41
+  -- PURPOSE : PROCESOS DE AMBIENTE DE ADMINISTRACION
+  
+PROCEDURE PUB_CRUD_TEMPLATE(IV_OPCION        VARCHAR2,
+                            IN_ID              NUMBER, 
+                    OC_CONSULTA      OUT SYS_REFCURSOR,
+                    OV_COD_RESPONSE  OUT VARCHAR2,
+                    OV_MSJ_RESPONSE  OUT VARCHAR2);
+
+PROCEDURE PUB_CRUD_AGENCIA(IV_OPCION          VARCHAR2,
+                           IN_ID              NUMBER,     
+                           IN_ID_EMPRESA      NUMBER,
+                           IV_CODIGO_AGENCIA  VARCHAR2,
+                           IV_NOMBRE_AGENCIA  VARCHAR2,
+                           IV_DESCRIPCION     VARCHAR2,
+                           IV_COD_HOMOLOGADO  VARCHAR2,
+                           IV_ESTADO          VARCHAR2,
+                           IV_USUARIO_SESION  VARCHAR2,
+                           OC_CONSULTA        OUT SYS_REFCURSOR,
+                           OV_COD_RESPONSE    OUT VARCHAR2,
+                           OV_MSJ_RESPONSE    OUT VARCHAR2);
+
+PROCEDURE PUB_RT_PRUEBA(IV_ENTRADA VARCHAR2,
+                        IV_APE VARCHAR2,
+                        PC_VALOR OUT SYS_REFCURSOR);
+                                             
+END PKG_TI_SEG_TRX_ADMINISTRADOR;
+/
+CREATE OR REPLACE NONEDITIONABLE PACKAGE BODY PKG_TI_SEG_TRX_ADMINISTRADOR IS
+
+PROCEDURE PUB_CRUD_TEMPLATE(IV_OPCION        VARCHAR2,
+                            IN_ID              NUMBER, 
+                    OC_CONSULTA      OUT SYS_REFCURSOR,
+                    OV_COD_RESPONSE  OUT VARCHAR2,
+                    OV_MSJ_RESPONSE  OUT VARCHAR2)
+AS
+ LN_INCREMENTAL NUMBER;
+ LN_EXISTE NUMBER;
+BEGIN
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE('TEMPLATE algo mas');
+    /*IF IV_OPCION = 'IN' THEN
+    ELSIF IV_OPCION = 'AC' THEN
+    ELSIF IV_OPCION = 'EL' THEN
+    ELSIF IV_OPCION = 'CG' THEN
+    ELSIF IV_OPCION = 'CI' THEN
+    ELSE
+      OV_COD_RESPONSE := '02';
+      OV_MSJ_RESPONSE := 'OPCIÓN NO CONFIGURADA';
+    END IF;*/
+  EXCEPTION
+    WHEN OTHERS THEN
+      OV_COD_RESPONSE   := '99' ;
+      OV_MSJ_RESPONSE   :='ERROR AL CONSULTAR LOS DATOS.';
+      OV_MSJ_RESPONSE  :='COD=>' || OV_COD_RESPONSE ||'.. MSJ=>'|| OV_MSJ_RESPONSE ||'.. COD ORA=>'|| SUBSTR(SQLCODE, 1, 5) ||'.. MSJ ORA=>'|| SUBSTR(SQLERRM, 1, 200) || '.. ERROR GRAL=>'|| $$PLSQL_UNIT || '.. LINEA EXP=>' || $$PLSQL_LINE || '.. LINEA ERROR=>' ||DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
+  END;
+END PUB_CRUD_TEMPLATE;
+
+PROCEDURE PUB_CRUD_AGENCIA(IV_OPCION          VARCHAR2,
+                           IN_ID              NUMBER,     
+                           IN_ID_EMPRESA      NUMBER,
+                           IV_CODIGO_AGENCIA  VARCHAR2,
+                           IV_NOMBRE_AGENCIA  VARCHAR2,
+                           IV_DESCRIPCION     VARCHAR2,
+                           IV_COD_HOMOLOGADO  VARCHAR2,
+                           IV_ESTADO          VARCHAR2,
+                           IV_USUARIO_SESION  VARCHAR2,
+                           
+                           OC_CONSULTA        OUT SYS_REFCURSOR,
+                           OV_COD_RESPONSE    OUT VARCHAR2,
+                           OV_MSJ_RESPONSE    OUT VARCHAR2)
+AS
+ LN_INCREMENTAL NUMBER;
+ LN_EXISTE NUMBER;
+BEGIN
+  OV_COD_RESPONSE := '01';
+  OV_MSJ_RESPONSE := 'NO SE PUDO EJECUTAR LA SOLICITUD EN LA BASE';
+  BEGIN
+    IF IV_OPCION = 'IN' THEN
+       SELECT COUNT(1) INTO LN_EXISTE FROM TI_SEG_AGENCIA A WHERE A.CODIGO_AGENCIA = IV_CODIGO_AGENCIA;
+      
+     IF LN_EXISTE > 0 THEN
+         OV_COD_RESPONSE := '02';
+         OV_MSJ_RESPONSE := 'YA EXISTE EL REGISTRO CON CÓDIGO = '||IV_CODIGO_AGENCIA;
+       ELSE
+         SELECT NVL(MAX(ID),0)+1 INTO LN_INCREMENTAL
+         FROM TI_SEG_AGENCIA;
+         
+         INSERT INTO TI_SEG_AGENCIA(
+           ID,
+           ID_EMPRESA,
+           CODIGO_AGENCIA,
+           NOMBRE_AGENCIA,
+           DESCRIPCION,
+           COD_HOMOLOGADO,
+           FECHA_INGRESO,
+           USUARIO_INGRESO,
+           FECHA_MODIFICACION,
+           USUARIO_MODIFICACION)
+          VALUES(
+           LN_INCREMENTAL,
+           IN_ID_EMPRESA,
+           IV_CODIGO_AGENCIA,
+           IV_NOMBRE_AGENCIA,
+           IV_DESCRIPCION,
+           IV_COD_HOMOLOGADO,
+           SYSDATE,
+           IV_USUARIO_SESION,
+           SYSDATE,
+           IV_USUARIO_SESION);
+           COMMIT;
+         OV_COD_RESPONSE := '00';
+         OV_MSJ_RESPONSE := 'TRANSACCIÓN EXISTOSA';
+       END IF;
+       
+    ELSIF IV_OPCION = 'AC' THEN
+       DBMS_OUTPUT.PUT_LINE('TEMPLATE');
+    ELSIF IV_OPCION = 'EL' THEN
+       DBMS_OUTPUT.PUT_LINE('TEMPLATE');
+    ELSIF IV_OPCION = 'CG' THEN
+       DBMS_OUTPUT.PUT_LINE('TEMPLATE');
+    ELSIF IV_OPCION = 'CI' THEN
+       DBMS_OUTPUT.PUT_LINE('TEMPLATE');
+    ELSE
+      OV_COD_RESPONSE := '02';
+      OV_MSJ_RESPONSE := 'OPCIÓN NO CONFIGURADA';
+    END IF;
+  EXCEPTION
+    WHEN OTHERS THEN
+      OV_COD_RESPONSE   := '99' ;
+      OV_MSJ_RESPONSE   :='ERROR AL CONSULTAR LOS DATOS.';
+      OV_MSJ_RESPONSE  :='COD=>' || OV_COD_RESPONSE ||'.. MSJ=>'|| OV_MSJ_RESPONSE ||'.. COD ORA=>'|| SUBSTR(SQLCODE, 1, 5) ||'.. MSJ ORA=>'|| SUBSTR(SQLERRM, 1, 200) || '.. ERROR GRAL=>'|| $$PLSQL_UNIT || '.. LINEA EXP=>' || $$PLSQL_LINE || '.. LINEA ERROR=>' ||DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
+  END;
+END PUB_CRUD_AGENCIA;
+
+PROCEDURE PUB_RT_PRUEBA(IV_ENTRADA VARCHAR2,
+                        IV_APE VARCHAR2,
+                        PC_VALOR OUT SYS_REFCURSOR)
+AS
+BEGIN
+  OPEN PC_VALOR FOR
+  SELECT 'KEVIN a ' || IV_ENTRADA AS NOMBRE, 'GALARZA '||IV_APE AS APELLIDO FROM DUAL;
+  --PC_VALOR := 'VALOR DE PRUEBA desde el paquete';
+END;
+
+END PKG_TI_SEG_TRX_ADMINISTRADOR;
+/
