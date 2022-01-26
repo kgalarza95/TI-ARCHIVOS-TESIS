@@ -10,3 +10,9 @@ git add .   ##agregar todos llos arcchivos
 git commit -m "mensaje del commit"
 
 token git hub: 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
+
+##tuto fuente: https://www.freecodecamp.org/espanol/news/subir-a-github-lo-suficientemente-simple-para-poetas/
+
+git remote add origin https://url repo
+git remote -v     ##supuesta magia de nomres de carpeta
+git push origin master
