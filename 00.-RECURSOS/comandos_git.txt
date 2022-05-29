@@ -9,7 +9,7 @@ git add .   ##agregar todos llos arcchivos
 
 git commit -m "mensaje del commit"
 
-token git hub: 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
+token git hub: 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
 
 ##tuto fuente: https://www.freecodecamp.org/espanol/news/subir-a-github-lo-suficientemente-simple-para-poetas/
 
