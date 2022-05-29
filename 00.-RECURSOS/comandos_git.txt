@@ -16,3 +16,10 @@ token git hub: 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
 git remote add origin https://url repo
 git remote -v     ##supuesta magia de nomres de carpeta
 git push origin master
+
+
+##O ESTE CODIGO
+git branch
+git remote -v
+git submodule status
+git push https://kgalarza95@github.com/kgalarza95/TI-Front-End-BDL refs/heads/master:refs/heads/master
